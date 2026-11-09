@@ -1,0 +1,32 @@
+function(AddCoverage target)
+    find_program(LCOV_PATH lcov REQUIRED)
+    find_program(GENHTML_PATH genhtml REQUIRED)
+
+    add_custom_target(coverage-${target}
+            COMMAND ${LCOV_PATH} -d . --zerocounters
+            COMMAND $<TARGET_FILE:${target}>
+            COMMAND ${LCOV_PATH} -d . --capture -o coverage.info --ignore-errors unused,inconsistent
+            COMMAND ${LCOV_PATH} -r coverage.info '/usr/include/*' '*include/c++*' --ignore-errors unused
+            -o filtered.info
+            COMMAND ${GENHTML_PATH} -o coverage-${target}
+            filtered.info --legend
+            COMMAND rm -rf coverage.info filtered.info
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+endfunction()
+
+function(CoveragePostCleanup target)
+    add_custom_command(TARGET ${target} PRE_BUILD COMMAND
+            find ${CMAKE_BINARY_DIR} -type f
+            -name '*.gcda' -exec rm {} +
+    )
+endfunction()
+
+function(CoveragePrepare target)
+    if(CMAKE_BUILD_TYPE STREQUAL Debug)
+        target_compile_options(${target}
+                PRIVATE --coverage -fno-inline
+        )
+        target_link_options(${target} PUBLIC --coverage)
+    endif ()
+endfunction()
