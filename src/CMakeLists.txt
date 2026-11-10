@@ -1,2 +1,6 @@
+include(CPPCheck)
+include(CoverageTests)
+include(ClangFormat)
+#include(Doxygen)
 add_subdirectory(libdepo)
 add_subdirectory(dcc)
