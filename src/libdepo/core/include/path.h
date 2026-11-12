@@ -2,18 +2,24 @@
 #include <string>
 
 namespace depo::core {
-    class resolver;
     class Path {
     public:
-        explicit Path(const std::string_view&& path = "");
+        ~Path();
+        explicit Path(std::string_view path = "");
         Path(const Path& other);
         Path& operator=(const Path& other);
         Path(Path&& other) noexcept;
         Path& operator=(Path&& other) noexcept;
-        ~Path();
-        [[nodiscard]] std::string evalAsString() const;
+        Path& operator+=(const Path& other);
+        Path& operator+=(std::string_view string);
+        bool operator==(const Path& other) const noexcept;
+        [[nodiscard]] std::string unexpandedString() const;
+
+        friend bool operator==(const Path& path, std::string_view string);
 
     private:
+        [[nodiscard]] const std::string& getString() const noexcept;
         std::string m_path;
     };
+    bool operator==(const Path& path, std::string_view string);
 } // namespace depo::core

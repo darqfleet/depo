@@ -1,20 +1,53 @@
 #include "path.h"
 #include <iostream>
+#include <utility>
 using namespace depo::core;
+Path::~Path() = default;
 
-Path::Path(const std::string_view&& path) : m_path{path} { std::cout << "explicit ctor" << std::endl; }
-Path::Path(const Path& other) : m_path{other.m_path} { std::cout << "copy constructor" << std::endl; }
+
+Path::Path(std::string_view path) : m_path{path} {}
+
+
+Path::Path(const Path& other) : m_path{other.m_path} {}
+
 
 Path& Path::operator=(const Path& other) {
-    m_path = other.m_path;
-    std::cout << "copy assignment operator" << std::endl;
+    if (this != &other)
+    {
+        m_path = other.m_path;
+    }
     return *this;
 }
-Path::Path(Path&& other) noexcept : m_path{std::move(other.m_path)} { std::cout << "move ctor" << std::endl; }
+
+
+Path::Path(Path&& other) noexcept : m_path{std::exchange(other.m_path, "")} {}
+
+
 Path& Path::operator=(Path&& other) noexcept {
-    std::cout << "move assignment operator" << std::endl;
-    m_path = std::move(other.m_path);
+    if (this != &other)
+    {
+        m_path = std::exchange(other.m_path, "");
+    }
     return *this;
 }
-Path::~Path() = default;
-std::string Path::evalAsString() const { return m_path; }
+
+
+Path& Path::operator+=(const Path& other) {
+    m_path += other.m_path;
+    return *this;
+}
+
+
+Path& Path::operator+=(std::string_view string) {
+    m_path += string;
+    return *this;
+}
+
+bool Path::operator==(const Path& other) const noexcept { return m_path == other.m_path; }
+
+
+std::string Path::unexpandedString() const { return m_path; }
+
+const std::string& Path::getString() const noexcept { return m_path; }
+
+bool depo::core::operator==(const Path& path, std::string_view string) { return string == path.getString(); }
