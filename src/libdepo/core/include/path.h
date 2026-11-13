@@ -10,11 +10,25 @@ namespace depo::core {
         Path& operator=(const Path& other);
         Path(Path&& other) noexcept;
         Path& operator=(Path&& other) noexcept;
+
         Path& operator+=(const Path& other);
         Path& operator+=(std::string_view string);
-        bool operator==(const Path& other) const noexcept;
-        [[nodiscard]] std::string unexpandedString() const;
 
+        Path& operator/=(const Path& other);
+        Path& operator/=(std::string_view string);
+
+        Path operator+(const Path& other) const;
+        Path operator+(std::string_view string) const;
+
+        Path operator/(const Path& other) const;
+        Path operator/(std::string_view string) const;
+
+        bool operator==(const Path& other) const noexcept;
+        explicit operator bool() const noexcept;
+
+        [[nodiscard]] bool exists() const;
+        [[nodiscard]] std::string unexpandedString() const;
+        void clear();
         friend bool operator==(const Path& path, std::string_view string);
 
     private:

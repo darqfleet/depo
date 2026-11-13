@@ -8,3 +8,5 @@ include(BuildOnWrongDir)
 
 add_subdirectory(src bin)
 add_subdirectory(tests)
+
+add_executable(lab debug.cpp)

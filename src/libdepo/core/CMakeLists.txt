@@ -1,5 +1,4 @@
 add_library(depocore_obj OBJECT path.cpp)
-
 target_include_directories(depocore_obj PUBLIC include)
 #target_include_directories(depocore_obj INTERFACE
 #        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/depo>"

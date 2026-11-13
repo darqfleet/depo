@@ -3,6 +3,66 @@
 using namespace depo::core;
 const std::string defaultPath{"/depo/0000/workflow"};
 
+TEST(Path, ExtraSlashes) {
+    Path path{"/extra/slash/"};
+    EXPECT_EQ(path.unexpandedString(), "/extra/slash");
+    Path path2{defaultPath};
+    path2+="//somedir";
+    EXPECT_EQ(path2.unexpandedString(), "/depo/0000/workflow");
+}
+
+TEST(Path, OperatorDivideEQ) {
+    Path path{defaultPath};
+    path /= "subfolder";
+    EXPECT_EQ(path.unexpandedString(), "/depo/0000/workflow/subfolder");
+    Path path2{"file.txt"};
+    path /= path2;
+    EXPECT_EQ(path.unexpandedString(), "/depo/0000/workflow/subfolder/file.txt");
+    Path path3{"/root"};
+    Path path4{path3 /= "config.dp"};
+    EXPECT_EQ(path4.unexpandedString(), "/root/config.dp");
+    EXPECT_EQ(path3.unexpandedString(), "/root/config.dp");
+}
+
+TEST(Path, operatorBool) {
+    Path path{defaultPath};
+    bool result{static_cast<bool>(path)};
+    EXPECT_TRUE(path);
+    EXPECT_TRUE(result);
+    path.clear();
+    EXPECT_FALSE(path);
+}
+
+TEST(Path, clear) {
+    Path path{defaultPath};
+    EXPECT_EQ(path.unexpandedString(), "/depo/0000/workflow");
+    path.clear();
+    EXPECT_EQ(path.unexpandedString(), "");
+}
+
+TEST(Path, OperatorDivide) {
+    Path path{"/root"};
+    Path path2 = path / "config.dp";
+    EXPECT_EQ(path2.unexpandedString(), "/root/config.dp");
+    Path path3{Path{"/etc"} / Path{"config.dp"}};
+    EXPECT_EQ(path3.unexpandedString(), "/etc/config.dp");
+    path = path / Path{"etc"} / "file.txt";
+    EXPECT_EQ(path.unexpandedString(), "/root/etc/file.txt");
+}
+
+
+TEST(Path, OperatorPlus) {
+    Path path{Path{"/a"} + Path{"/b"}};
+    EXPECT_EQ(path.unexpandedString(), "/a/b");
+    Path path2{Path{"/a"} + "/b2"};
+    EXPECT_EQ(path2.unexpandedString(), "/a/b2");
+    Path path3{"/NotChanged"};
+    Path path4{path3 + path};
+    EXPECT_EQ(path4.unexpandedString(), "/NotChanged/a/b");
+    EXPECT_EQ(path3.unexpandedString(), "/NotChanged");
+
+}
+
 TEST(Path, OperatorPLusEQ) {
     Path path{defaultPath};
     path += Path{"/added"};
