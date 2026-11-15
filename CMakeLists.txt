@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.3)
-project(depo VERSION 0.0.3 LANGUAGES CXX)
+project(depo VERSION 0.0.5 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 
@@ -10,3 +10,4 @@ add_subdirectory(src bin)
 add_subdirectory(tests)
 
 add_executable(lab debug.cpp)
+target_link_libraries(lab PRIVATE depocore )

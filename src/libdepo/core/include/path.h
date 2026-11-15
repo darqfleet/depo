@@ -27,12 +27,12 @@ namespace depo::core {
         explicit operator bool() const noexcept;
 
         [[nodiscard]] bool exists() const;
-        [[nodiscard]] std::string unexpandedString() const;
+        [[nodiscard]] const std::string& unexpandedString() const;
         void clear();
         friend bool operator==(const Path& path, std::string_view string);
 
     private:
-        [[nodiscard]] const std::string& getString() const noexcept;
+        [[nodiscard]] const std::string& eval() const noexcept;
         std::string m_path;
     };
     bool operator==(const Path& path, std::string_view string);

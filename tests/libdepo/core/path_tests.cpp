@@ -1,14 +1,29 @@
 #include <gtest/gtest.h>
-#include "path.h"
+#include "depo.h"
 using namespace depo::core;
 const std::string defaultPath{"/depo/0000/workflow"};
 
 TEST(Path, ExtraSlashes) {
-    Path path{"/extra/slash/"};
+    Path path{"/extra/slash////"};
     EXPECT_EQ(path.unexpandedString(), "/extra/slash");
-    Path path2{defaultPath};
-    path2+="//somedir";
-    EXPECT_EQ(path2.unexpandedString(), "/depo/0000/workflow");
+    path /= " ///subdir// ";
+    EXPECT_EQ(path.unexpandedString(), "/extra/slash/subdir");
+    Path path2{"/collect/"};
+    EXPECT_EQ(path2.unexpandedString(), "/collect");
+    path+=path2;
+    EXPECT_EQ(path.unexpandedString(), "/extra/slash/subdir/collect");
+    path += "_back";
+    EXPECT_EQ(path.unexpandedString(), "/extra/slash/subdir/collect_back");
+    Path path3{Path{"/root/"} + "s"};
+    EXPECT_EQ(path3.unexpandedString(), "/roots");
+    Path path4{Path{"/roots"} / "/config/"};
+    EXPECT_EQ(path4.unexpandedString(), "/roots/config");
+    Path path5{Path{"/roots//// "} / Path{"config/ "}};
+    EXPECT_EQ(path5.unexpandedString(), "/roots/config");
+
+
+
+
 }
 
 TEST(Path, OperatorDivideEQ) {
@@ -86,6 +101,16 @@ TEST(Path, OperatorEQ) {
 
 }
 
+TEST(Path, CornerCase) {
+    Path path{"/"};
+    Path path2{"geo"};
+    EXPECT_EQ(path.unexpandedString(), "/");
+    path += "bin/";
+    path+=path2;
+
+    EXPECT_EQ(path.unexpandedString(), "/bingeo");
+}
+
 TEST(Path, CtorRValue) {
     Path path{defaultPath};
     ASSERT_EQ(path.unexpandedString(), defaultPath);
@@ -123,10 +148,4 @@ TEST(Path, moveAssingnmentOperator) {
     path2 = std::move(path);
     ASSERT_EQ(path.unexpandedString(), "");
     ASSERT_EQ(path2.unexpandedString(), defaultPath);
-}
-
-int main(int argc, char **argv) {
-    printf("Running main() from %s\n", __FILE__);
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
