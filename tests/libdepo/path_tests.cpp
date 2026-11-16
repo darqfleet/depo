@@ -3,6 +3,16 @@
 using namespace depo::core;
 const std::string defaultPath{"/depo/0000/workflow"};
 
+
+TEST(Path, SlashAdd) {
+    Path path{"/usr"};
+    path+= "/";
+    EXPECT_EQ(path.unexpandedString(), "/usr");
+    path += "/bin/";
+    EXPECT_EQ(path.unexpandedString(), "/usr/bin");
+}
+
+
 TEST(Path, ExtraSlashes) {
     Path path{"/extra/slash////"};
     EXPECT_EQ(path.unexpandedString(), "/extra/slash");
@@ -21,14 +31,11 @@ TEST(Path, ExtraSlashes) {
     Path path5{Path{"/roots//// "} / Path{"config/ "}};
     EXPECT_EQ(path5.unexpandedString(), "/roots/config");
 
-
-
-
 }
 
 TEST(Path, OperatorDivideEQ) {
     Path path{defaultPath};
-    path /= "subfolder";
+    path /= "/subfolder/";
     EXPECT_EQ(path.unexpandedString(), "/depo/0000/workflow/subfolder");
     Path path2{"file.txt"};
     path /= path2;
@@ -98,18 +105,20 @@ TEST(Path, OperatorEQ) {
     EXPECT_TRUE(path2 == Path{"/other/path"});
     EXPECT_FALSE(Path{defaultPath} == "/other/path");
     EXPECT_TRUE(path == "/depo/0000/workflow");
-
 }
 
-TEST(Path, CornerCase) {
+
+TEST(Path, SimpleCreation) {
     Path path{"/"};
     Path path2{"geo"};
     EXPECT_EQ(path.unexpandedString(), "/");
     path += "bin/";
     path+=path2;
-
     EXPECT_EQ(path.unexpandedString(), "/bingeo");
+    Path path3{""};
+    EXPECT_EQ(path3.unexpandedString(), "");
 }
+
 
 TEST(Path, CtorRValue) {
     Path path{defaultPath};

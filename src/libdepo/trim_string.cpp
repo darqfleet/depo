@@ -1,4 +1,4 @@
-#include "trimString.h"
+#include "trim_string.h"
 using namespace depo::core;
 
 std::string_view TrimString::trim(std::string_view string, std::string_view trimChars, TrimDir trim) noexcept {

@@ -5,7 +5,7 @@ function(AddCoverage target)
     add_custom_target(coverage-${target}
             COMMAND ${LCOV_PATH} -d . --zerocounters
             COMMAND $<TARGET_FILE:${target}>
-            COMMAND ${LCOV_PATH} -d . --capture -o coverage.info --ignore-errors unused,inconsistent
+            COMMAND ${LCOV_PATH} -d . --capture -o coverage.info
             COMMAND ${LCOV_PATH} -r coverage.info '/usr/include/*' '*include/c++*' --ignore-errors unused
             -o filtered.info
             COMMAND ${GENHTML_PATH} -o coverage-${target}

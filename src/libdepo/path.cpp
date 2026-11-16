@@ -3,9 +3,10 @@
 
 #include "enums.h"
 #include "path.h"
-#include "trimString.h"
+#include "trim_string.h"
 
 using namespace depo::core;
+
 Path::~Path() = default;
 
 
@@ -46,7 +47,6 @@ Path& Path::operator=(Path&& other) noexcept {
 }
 
 
-Path& Path::operator+=(const Path& other) { return *this += other.m_path; }
 Path& Path::operator+=(std::string_view string) {
     std::string_view trimPath{TrimString::trim(string, " /", TrimDir::RIGHT)};
     if (m_path.empty() && trimPath.empty() && !string.empty() && string.find('/') != std::string_view::npos)
@@ -60,7 +60,9 @@ Path& Path::operator+=(std::string_view string) {
     return *this;
 }
 
-Path& Path::operator/=(const Path& other) { return *this /= other.m_path; }
+
+Path& Path::operator+=(const Path& other) { return *this += other.m_path; }
+
 
 Path& Path::operator/=(std::string_view string) {
     std::string_view trimmed{TrimString::trim(string, " /", TrimDir::BOTH)};
@@ -76,22 +78,29 @@ Path& Path::operator/=(std::string_view string) {
     return *this;
 }
 
+
+Path& Path::operator/=(const Path& other) { return *this /= other.m_path; }
+
 Path Path::operator+(const Path& other) const {
     Path temp{*this};
     temp += other;
     return temp;
 }
 
+
 Path Path::operator+(std::string_view string) const {
     Path temp{*this};
     temp += string;
     return temp;
 }
+
+
 Path Path::operator/(std::string_view string) const {
     Path temp{*this};
     temp /= string;
     return temp;
 }
+
 
 Path Path::operator/(const Path& other) const {
     Path temp{*this};
@@ -99,13 +108,23 @@ Path Path::operator/(const Path& other) const {
     return temp;
 }
 
+
 void Path::clear() { m_path.clear(); }
+
 
 bool Path::operator==(const Path& other) const noexcept { return m_path == other.m_path; }
 
+
 Path::operator bool() const noexcept { return !m_path.empty(); }
 
+
 bool Path::exists() const { return std::filesystem::exists(eval()); }
+
+
 const std::string& Path::unexpandedString() const { return m_path; }
+
+
 const std::string& Path::eval() const noexcept { return m_path; }
+
+
 bool depo::core::operator==(const Path& path, std::string_view string) { return string == path.unexpandedString(); }
