@@ -2,7 +2,7 @@ add_library(depocore_obj OBJECT
         path.cpp
         trim_string.cpp
         string_resolver.cpp
-        environment.cpp
+        env.cpp
         util.cpp
 )
 target_include_directories(depocore_obj PUBLIC include)

@@ -1,0 +1,8 @@
+set -o
+export HFS="/opt/hfs22.0.368"
+export HOUDINI_DSO_ERROR=2
+export curr=`pwd`
+cd $HFS
+source ./houdini_setup
+cd $curr
+unset $curr

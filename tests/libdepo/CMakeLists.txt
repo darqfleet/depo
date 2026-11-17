@@ -2,7 +2,7 @@ add_executable(depocore_tests
         all_tests.cpp
         path_tests.cpp
         trim_string_tests.cpp
-        environment_tests.cpp
+        env_tests.cpp
         utils_tests.cpp
 
 )

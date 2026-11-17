@@ -1,3 +1,4 @@
+0.0.6 define Env class, and coverage tests
 0.0.5 restructure project, define few classes to develop
 0.0.4 developing concatenation methods for Path class, tests coverage
 0.0.3 developing Path class, tests coverage
