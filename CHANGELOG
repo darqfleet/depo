@@ -1,4 +1,4 @@
-0.0.8 implement method expandedString in Path
+0.0.9 fix memory leak in depo::core::Env::set()
 0.0.7 implement unwrapping variables in StringResolver
 0.0.6 define Env class, and coverage tests
 0.0.5 restructure project, define few classes to develop

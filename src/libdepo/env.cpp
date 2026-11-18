@@ -38,10 +38,7 @@ void Env::set(std::string_view name, std::string_view value) {
         }
         else
         {
-            std::string result{name};
-            result += '=';
-            result += value;
-            putenv(strdup(result.c_str()));
+            setenv(std::string{name}.c_str(), std::string{value}.c_str(), 1);
         }
     }
 }
