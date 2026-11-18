@@ -4,6 +4,7 @@ add_executable(depocore_tests
         trim_string_tests.cpp
         env_tests.cpp
         utils_tests.cpp
+        string_resolver_tests.cpp
 
 )
 target_link_libraries(depocore_tests PUBLIC depocore_static)
