@@ -3,6 +3,14 @@
 using namespace depo::core;
 const std::string defaultPath{"/depo/0000/workflow"};
 
+TEST(Path, eval) {
+    Path path{"$CACHE/sub/dir"};
+    Env::set("CACHE", "/path/to/cache");
+    EXPECT_EQ(path.expandedString(), "/path/to/cache/sub/dir");
+    EXPECT_EQ(path.unexpandedString(), "$CACHE/sub/dir");
+    Env::set("CACHE", "/cache");
+    EXPECT_EQ(path.expandedString(), "/cache/sub/dir");
+}
 
 TEST(Path, SlashAdd) {
     Path path{"/usr"};
@@ -70,6 +78,10 @@ TEST(Path, OperatorDivide) {
     EXPECT_EQ(path3.unexpandedString(), "/etc/config.dp");
     path = path / Path{"etc"} / "file.txt";
     EXPECT_EQ(path.unexpandedString(), "/root/etc/file.txt");
+    path /= "";
+    EXPECT_EQ(path.unexpandedString(), "/root/etc/file.txt");
+    path /= "/";
+    EXPECT_EQ(path.unexpandedString(), "/root/etc/file.txt");
 }
 
 
@@ -91,6 +103,10 @@ TEST(Path, OperatorPLusEQ) {
     EXPECT_EQ(path.unexpandedString(), "/depo/0000/workflow/added");
     path += "/subdir";
     EXPECT_EQ(path.unexpandedString(), "/depo/0000/workflow/added/subdir");
+    Path path2{""};
+    EXPECT_EQ(path2.expandedString(), "");
+    path2 += "/";
+    EXPECT_EQ(path2.expandedString(), "/");
 }
 
 TEST(Path, OperatorEQ) {

@@ -3,6 +3,7 @@
 
 #include "enums.h"
 #include "path.h"
+#include "string_resolver.h"
 #include "trim_string.h"
 
 using namespace depo::core;
@@ -122,9 +123,10 @@ bool Path::exists() const { return std::filesystem::exists(eval()); }
 
 
 const std::string& Path::unexpandedString() const { return m_path; }
+std::string Path::expandedString() const { return eval(); }
 
 
-const std::string& Path::eval() const noexcept { return m_path; }
+std::string Path::eval() const { return StringResolver::unwrapVars(m_path); }
 
 
 bool depo::core::operator==(const Path& path, std::string_view string) { return string == path.unexpandedString(); }
