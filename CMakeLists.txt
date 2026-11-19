@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.3)
-project(depo VERSION 0.0.9 LANGUAGES CXX)
+project(depo VERSION 0.0.10 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 

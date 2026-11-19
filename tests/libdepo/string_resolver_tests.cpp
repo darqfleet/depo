@@ -3,6 +3,16 @@
 #include "string_resolver.h"
 using namespace depo::core;
 
+TEST(StringResolver, undercoreCase) {
+    Env::set("FOO", "VALUE_FOO");
+    std::string_view string{"$FOO_TAIL_STRING"};
+    EXPECT_EQ(StringResolver::unwrapVars(string), "");
+    std::string_view string2{"SOME_$FOO_TAIL_STRING"};
+    EXPECT_EQ(StringResolver::unwrapVars(string2), "SOME_");
+    std::string_view string3{"${FOO}_RIGHT_USING"};
+    EXPECT_EQ(StringResolver::unwrapVars(string3), "VALUE_FOO_RIGHT_USING");
+}
+
 TEST_F(EnvFixture, tail) {
     std::string_view path{"/head/${DEPO_VAR_ONE}/some/dir/$DEPO_VAR_TWO/tail"};
     EXPECT_EQ(StringResolver::unwrapVars(path), "/head/DEPO_VALUE_1/some/dir/DEPO_VALUE_2/tail");
