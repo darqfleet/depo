@@ -8,7 +8,7 @@ TEST(Logger, logLevelToString) {
     EXPECT_EQ(logLevelToString(LogLevel::MESSAGE), "MESSAGE");
     EXPECT_EQ(logLevelToString(LogLevel::WARNING), "WARNING");
     EXPECT_EQ(logLevelToString(LogLevel::ERROR), "ERROR");
-    EXPECT_EQ(logLevelToString(LogLevel::CRITICAl), "CRITICAL");
+    EXPECT_EQ(logLevelToString(LogLevel::CRITICAL), "CRITICAL");
 }
 
 TEST(Logger, setLevel) {
@@ -24,22 +24,13 @@ TEST(Logger, setLevel) {
     EXPECT_EQ(logger.level(), LogLevel::WARNING);
     logger.setLevel(LogLevel::ERROR);
     EXPECT_EQ(logger.level(), LogLevel::ERROR);
-    logger.setLevel(LogLevel::CRITICAl);
-    EXPECT_EQ(logger.level(), LogLevel::CRITICAl);
+    logger.setLevel(LogLevel::CRITICAL);
+    EXPECT_EQ(logger.level(), LogLevel::CRITICAL);
 }
 TEST(Logger, defaultConstructor) {
     Logger& logger{Logger::get()};
     EXPECT_EQ(logger.level(), LogLevel::INFO);
 
-}
-
-TEST(Logger, LogLevelStyle) {
-    EXPECT_EQ(static_cast<int>(LogLevelStyle::DEBUG), 96);
-    EXPECT_EQ(static_cast<int>(LogLevelStyle::INFO), 95);
-    EXPECT_EQ(static_cast<int>(LogLevelStyle::MESSAGE), 94);
-    EXPECT_EQ(static_cast<int>(LogLevelStyle::WARNING), 93);
-    EXPECT_EQ(static_cast<int>(LogLevelStyle::ERROR), 92);
-    EXPECT_EQ(static_cast<int>(LogLevelStyle::CRITICAl), 91);
 }
 
 TEST(Logger, LoggerLevel) {
@@ -48,5 +39,5 @@ TEST(Logger, LoggerLevel) {
     EXPECT_EQ(static_cast<int>(LogLevel::MESSAGE), 30);
     EXPECT_EQ(static_cast<int>(LogLevel::WARNING), 40);
     EXPECT_EQ(static_cast<int>(LogLevel::ERROR), 50);
-    EXPECT_EQ(static_cast<int>(LogLevel::CRITICAl), 60);
+    EXPECT_EQ(static_cast<int>(LogLevel::CRITICAL), 60);
 }

@@ -1,24 +1,13 @@
 #pragma once
+#include <atomic>
+#include <chrono>
+#include <format>
 #include <iostream>
-#include <sstream>
 #include <mutex>
 
 namespace depo::util {
-
-
-    enum class LogLevel { DEBUG=10, INFO=20, MESSAGE=30, WARNING=40, ERROR=50, CRITICAl=60 };
-
-
-    enum class LogLevelStyle { DEBUG=96, INFO=95, MESSAGE=94, WARNING=93, ERROR=92, CRITICAl=91 };
-
-
-    // inline std::string timeStamp() {
-    //     auto tes{std::chrono::system_clock::now()};
-    //     auto ms{std::chrono::floor<std::chrono::milliseconds>(tes)};
-    //     return std::format("[{:%Y-%m-%d]:[%H:%M:%S}]", ms);
-    // }
-
-    static std::string_view logLevelToString(const LogLevel& level) {
+    enum class LogLevel { DEBUG = 10, INFO = 20, MESSAGE = 30, WARNING = 40, ERROR = 50, CRITICAL = 60 };
+    inline constexpr std::string_view logLevelToString(const LogLevel& level) {
         switch (level)
         {
         case LogLevel::DEBUG:
@@ -31,14 +20,14 @@ namespace depo::util {
             return "WARNING";
         case LogLevel::ERROR:
             return "ERROR";
-        case LogLevel::CRITICAl:
+        case LogLevel::CRITICAL:
             return "CRITICAL";
-            default:
+        default:
             return "UNKNOWN";
         }
     }
 
-    inline int levelToStyle(const LogLevel& level) {
+    inline constexpr int levelToStyle(const LogLevel& level) {
         switch (level)
         {
         case LogLevel::DEBUG:
@@ -50,7 +39,7 @@ namespace depo::util {
         case LogLevel::WARNING:
             return 93;
         case LogLevel::ERROR:
-        case LogLevel::CRITICAl:
+        case LogLevel::CRITICAL:
             return 91;
         default:
             return 96;
@@ -64,40 +53,38 @@ namespace depo::util {
         }
 
         template <typename... Args>
-        void put(const LogLevel& logLevel, Args... args) {
-            // auto tes{std::chrono::system_clock::now()};
-            // auto ms{std::chrono::floor<std::chrono::milliseconds>(tes)};
-            // std::string time =  std::format("{:%Y-%m-%d %H:%M:%S}", ms);
-            if (logLevel >= m_level)
+        void put(const LogLevel logLevel, Args&&... args) {
+            if (logLevel < m_level.load(std::memory_order_acquire))
             {
-                std::stringstream m_logBuff;
-                // m_logBuff << time;
-                m_logBuff <<"[" << logLevelToString(logLevel) << "]";
-                ((m_logBuff << " " << args), ...);
-                {
-                    std::lock_guard<std::mutex> lock{m_mutex};
-                    std::cout << "\e[" << levelToStyle(logLevel) << "m";
-                    std::cout <<  m_logBuff.str()  << "\e[0" << "m" << std::endl;
-                }
+                return;
             }
 
+            std::string message{std::format("{} [{}]", timeStamp(), logLevelToString(m_level))};
+            ((message += std::format(" {}", std::forward<Args>(args))), ...);
+            const int style{levelToStyle(m_level)};
+            std::lock_guard<std::mutex> lock{m_mutex};
+            std::cout << "\033[" << style << "m" << message << "\033[0m\n";
         }
 
-        void setLevel(const LogLevel& level) {
-            m_level = level;
-        }
-        [[nodiscard]] const LogLevel& level() const {
-            return m_level;
-        }
+        void setLevel(const LogLevel& level) noexcept { m_level.store(level, std::memory_order_release); }
+
+
+        [[nodiscard]] const LogLevel& level() const noexcept { return m_level.load(std::memory_order_acquire); }
 
         Logger(const Logger&) = delete;
         Logger& operator=(const Logger&) = delete;
 
     private:
-        Logger() :m_level{LogLevel::INFO}{}
-        LogLevel m_level;
-        static std::mutex m_mutex;
+        [[nodiscard]] static std::string timeStamp() {
+            const std::chrono::time_point<std::chrono::system_clock> now{std::chrono::system_clock::now()};
+            std::chrono::zoned_time localTime{std::chrono::current_zone(),
+                                              std::chrono::floor<std::chrono::milliseconds>(now)};
+            return std::format("{:%F %H:%M:%S}", localTime);
+        }
+
+        Logger() : m_level{LogLevel::INFO} {}
+        std::atomic<LogLevel> m_level;
+        std::mutex m_mutex;
     };
-    std::mutex Logger::m_mutex;
 
 } // namespace depo::util

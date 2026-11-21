@@ -1,6 +1,8 @@
 #include <iostream>
+#include "logger.h"
 
 int main(int argc, char **argv) {
-    std::cout << "Hello Depo" << std::endl;
+    depo::util::Logger& l{depo::util::Logger::get()};
+    l.put(depo::util::LogLevel::ERROR, "some text");
     return 0;
 }
