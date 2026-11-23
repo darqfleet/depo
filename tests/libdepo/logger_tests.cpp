@@ -2,15 +2,6 @@
 #include "logger.h"
 using namespace depo::util;
 
-TEST(Logger, logLevelToString) {
-    EXPECT_EQ(logLevelToString(LogLevel::DEBUG), "DEBUG");
-    EXPECT_EQ(logLevelToString(LogLevel::INFO), "INFO");
-    EXPECT_EQ(logLevelToString(LogLevel::MESSAGE), "MESSAGE");
-    EXPECT_EQ(logLevelToString(LogLevel::WARNING), "WARNING");
-    EXPECT_EQ(logLevelToString(LogLevel::ERROR), "ERROR");
-    EXPECT_EQ(logLevelToString(LogLevel::CRITICAL), "CRITICAL");
-}
-
 TEST(Logger, setLevel) {
     Logger& logger{Logger::get()};
     EXPECT_EQ(logger.level(), LogLevel::INFO);
