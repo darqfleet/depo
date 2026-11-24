@@ -7,10 +7,10 @@
 #include <iostream>
 #include <mutex>
 
+#include "concepts.h"
 #include "enums.h"
 #include "env.h"
 #include "path.h"
-#include "concepts.h"
 
 
 using namespace depo::core;
@@ -37,7 +37,15 @@ namespace depo::util {
             const int style{levelToStyle(logLevel)};
 
             std::lock_guard<std::mutex> lock{m_mutex};
-            std::cout << "\033[" << style << "m" << message << "\033[0m\n";
+
+            if (logLevel > LogLevel::WARNING && logLevel < LogLevel::SYSMSG)
+            {
+                std::cerr << "\033[" << style << "m" << message << "\033[0m\n";
+            }else
+            {
+                std::cout << "\033[" << style << "m" << message << "\033[0m\n";
+            }
+
             putToHandler(message + "\n");
         }
 
@@ -77,7 +85,7 @@ namespace depo::util {
             case LogLevel::CRITICAL:
                 return 91;
             case LogLevel::SYSMSG:
-                    return 92;
+                return 92;
             default:
                 return 96;
             }
@@ -100,7 +108,7 @@ namespace depo::util {
             case LogLevel::CRITICAL:
                 return "CRITICAL";
             case LogLevel::SYSMSG:
-                    return "SYSMSG";
+                return "SYSMSG";
             default:
                 return "UNKNOWN";
             }
