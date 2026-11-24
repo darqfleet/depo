@@ -2,9 +2,12 @@
 #include "OP/OP_AutoLockInputs.h"
 #include "OP/OP_Operator.h"
 #include <iostream>
+#include "logger.h"
 
 
 using namespace depo::hou;
+using namespace depo::util;
+using namespace depo::core;
 
 OP_Operator* depo::hou::crateSopNodeTemplate() {
     OP_Operator* op = new OP_Operator(
@@ -42,6 +45,14 @@ OP_ERROR SOP_Node_Template::cookMySop(OP_Context &context) {
     }
     fpreal t{context.getTime()};
     duplicateSource(0, context);
+    Logger& logger{Logger::get()};
+    logger.put(LogLevel::CRITICAL, "critical from houdini");
+    logger.put(LogLevel::ERROR, "error from houdini");
+    logger.put(LogLevel::INFO, "info from houdini");
+    logger.put(LogLevel::MESSAGE, "MESSAGE from houdini");
+    logger.put(LogLevel::WARNING, "warning from houdini");
+    logger.setLevel(LogLevel::DEBUG);
+    logger.put(LogLevel::DEBUG, "debug from houdini");
     return error();
 }
 
